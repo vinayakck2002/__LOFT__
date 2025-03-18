@@ -6,9 +6,9 @@ from django.conf.urls.static import static
 urlpatterns = [
 
     # Custom Admin URLs
-    path('adm', views.admin_view, name='admin_view'),  # Custom admin home
+    path('adm', views.admin_view, name='admin_view'), 
     # path('seller/logout', views.seller_logout_view, name='seller_logout'),
-    # path('seller/add', views.admin_add_view, name='admin_add_view'),
+    path('admin_add_product', views.admin_add_product, name='admin_add_product'),
     # path('seller/delete/<int:id>', views.delete_view, name='delete'),
     # path('seller/edit/<int:pk>/', views.edit_view, name='edit'),
     
@@ -20,6 +20,7 @@ urlpatterns = [
     path('product', views.Product_view, name='product'),
     path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('productdetails/<int:pk>/', views.product_detail_view, name='product_detail'),
+    # path('search/', views.search_view, name='search'),
     path('logout', views.logout_view, name='logout'),
 ]
 

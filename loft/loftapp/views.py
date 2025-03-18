@@ -8,8 +8,13 @@ from .models import *
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.core.mail import send_mail
+
 def admin_view(request):
     return render(request, 'admin/admin_home.html')
+
+def admin_add_product(request):
+
+    return render (request,'admin/add_product.html')
 
 # =============================USER--SIDE====================================================================================================
 def register_view(request):
@@ -95,7 +100,7 @@ def loft_view(request):
             'featured':featured,
             'latest':latest
         }
-        return render(request,'user/loft.html',context)#loft#inde
+        return render(request,'user/loft.html',context)#loft#index
 #===================ALL--PRODUCTS--VIEW==========================================================================================================
 def Product_view(request):                                                                       
     product_list = Product.objects.all()  # This is a QuerySet of products
@@ -160,6 +165,12 @@ def remove_from_cart(request, item_id):
     item = get_object_or_404(Cart, id=item_id, user=request.user)
     item.delete()
     return redirect('cart')
+#===========================================================================================================================================
+# def search_view(request):
+#     query = request.GET.get('query', '')
+#     products = Product.objects.filter(name__icontains=query) if query else Product.objects.all()
+
+#     return render(request, 'user/product.html', {'products': products, 'query': query})
     
 # ======================Logout==================================================================================================================
     
