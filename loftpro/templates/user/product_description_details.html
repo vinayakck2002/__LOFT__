@@ -1,0 +1,135 @@
+<!-- Modified product_description_details.html with wishlist functionality -->
+<div class="desc-container">
+    <!-- Display any messages from the backend -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="desc-product-container">
+        <div class="desc-product-image-container">
+            <div class="desc-product-image-main">
+                <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                
+                <div class="desc-image-nav desc-image-nav-prev" onclick="prevImage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </div>
+                <div class="desc-image-nav desc-image-nav-next" onclick="nextImage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+
+                <div class="desc-slider-controls">
+                    <div class="desc-slider-dot active" onclick="changeImage(0)"></div>
+                    <div class="desc-slider-dot" onclick="changeImage(1)"></div>
+                    <div class="desc-slider-dot" onclick="changeImage(2)"></div>
+                    <div class="desc-slider-dot" onclick="changeImage(3)"></div>
+                    <div class="desc-slider-dot" onclick="changeImage(4)"></div>
+                </div>
+            </div>
+
+            <div class="desc-product-thumbnails">
+                <div class="desc-thumbnail active" onclick="changeImage(0)">
+                    <img src="{{ product.image.url }}" alt="Product thumbnail 1">
+                </div>
+                <div class="desc-thumbnail" onclick="changeImage(1)">
+                    <img src="{{ product.image1.url }}" alt="Product thumbnail 2">
+                </div>
+                <div class="desc-thumbnail" onclick="changeImage(2)">
+                    <img src="{{ product.image2.url }}" alt="Product thumbnail 3">
+                </div>
+                <div class="desc-thumbnail" onclick="changeImage(3)">
+                    <img src="{{ product.image3.url }}" alt="Product thumbnail 4">
+                </div>
+                <div class="desc-thumbnail" onclick="changeImage(4)">
+                    <img src="{{ product.image4.url }}" alt="Product thumbnail 5">
+                </div>
+            </div>
+        </div>
+        <form  method="POST" action="{% url 'add_to_cart' product.id %}">
+            {% csrf_token %}
+        <div class="desc-product-info">
+            <h1 class="desc-product-title">{{ product.name }}</h1>
+            <div class="desc-product-price"><i class='bx bx-rupee'></i>{{ product.price }}</div>
+
+            <div class="desc-product-meta">
+                <div class="desc-meta-item">
+                    <span class="desc-meta-label">Category</span>
+                    <span class="desc-meta-value"> {{ product.shoe_category }}</span>
+                </div>
+            </div>
+            <div class="desc-product-meta">
+                <div class="desc-meta-item">
+                    <span class="desc-meta-label">Description</span>
+                    <span class="desc-meta-value"> {{ product.description }}</span>
+                </div>
+            </div>
+            
+            
+
+    <input type="hidden" value="{{ product.id }}" name="product_id">
+
+    {% if sizes %}
+    <div class="desc-size-selector">
+        <label class="desc-meta-label" for="size-dropdown">Select Size</label>
+        <select class="desc-meta-value" name="selected_size" id="size-dropdown" required>
+            <option  value="" disabled selected>Select a size</option>
+            {% for size in sizes %}
+                {% if size.Stock > 0 %}
+                    <option value="{{ size.size }}">
+                        {{ size.size }} in stock
+                    </option>
+                {% else %}
+                    <option value="{{ size.size }}" disabled>
+                        {{ size.size }} (Out of stock)
+                    </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    
+    {% endif %}
+
+    <div class="desc-product-actions">
+        <div class="desc-quantity-selector">
+            <span class="desc-quantity-label">Quantity:</span>
+            <div class="desc-quantity-controls">
+                <input type="number" class="desc-quantity-input" name="quantity" id="quantity" value="1" min="1">
+            </div>
+        </div>
+
+        <div class="desc-button-group">
+            <a href="../../order_payment/{{ product.pk }}"> 
+                <button type="button" class="desc-btn desc-btn-primary">BUY</button>
+            </a>
+            {% if not in_stock %}
+                <p class="text-danger">Out of Stock</p>
+            {% else %}
+                {% if product.id in cart_product_ids %}
+                    <a href="{% url 'cart' %}">
+                        <button type="button" class="desc-btn desc-btn-primary">GO TO CART</button>
+                    </a>
+                {% else %}
+                    <button type="submit" class="desc-btn desc-btn-primary">ADD TO CART</button>
+                {% endif %}
+            {% endif %}
+
+            {% if product.id in wishlist_product_ids %}
+                <a href="{% url 'remove_from_wishlist' product.id %}" class="desc-btn desc-btn-icon wishlist-btn in-wishlist">❤️</a>
+            {% else %}
+                <a href="{% url 'add_to_wishlist' product.id %}" class="desc-btn desc-btn-icon wishlist-btn">🤍</a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+
+    </div>
+</div>
