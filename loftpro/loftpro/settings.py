@@ -132,5 +132,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'loft5661@gmail.com'  # Your Gmail address
-EMAIL_HOST_PASSWORD = 'nooki erikk'  # Your Gmail password or App password
-DEFAULT_FROM_EMAIL = 'loft5661@gmail.com'  # Default from email (can be the same as EMAIL_HOST_USER)
+EMAIL_HOST_PASSWORD = 'igpm bsjq yoot mfau'  # Your Gmail password or App password
+DEFAULT_FROM_EMAIL = 'loft5661@gmail.com'

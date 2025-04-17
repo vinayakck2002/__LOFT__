@@ -434,6 +434,11 @@ def register_view(request):
             messages.error(request, 'Invalid username or password.')
         
     return render(request, 'user/account.html')  # Added missing parenthesis here)
+# ------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 #===============================Landing-page==============================================================================================================
 
 def loft_view(request):

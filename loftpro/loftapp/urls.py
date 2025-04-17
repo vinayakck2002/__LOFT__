@@ -21,6 +21,8 @@ urlpatterns = [
 
     path('', views.loft_view, name='user'),
     path('register', views.register_view, name='register'),
+    path('login/', views.register_view, name='login'),  # ✅ Add this
+
     path('cart', views.Cart_view, name='cart'),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('product', views.Product_view, name='product'),
@@ -33,6 +35,9 @@ urlpatterns = [
     path('wishlist/', views.view_wishlist, name='wishlist'),
     path('add_to_wishlist/<int:id>/', views.add_to_wishlist, name='add_to_wishlist'),
     path('remove_from_wishlist/<int:id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
+
+
+
 
     
 
