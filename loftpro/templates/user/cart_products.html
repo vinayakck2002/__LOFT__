@@ -1,4 +1,4 @@
-<!-- Template changes (user/cart.html) -->
+<!-- Updated Template (user/cart.html) -->
 <div class="small-container cart-page">
     {% if cart_items %}
     <div class="cart-table-responsive">
@@ -21,7 +21,8 @@
                             <div class="cart-product-details">
                                 <p class="product-name">{{i.product.name}}</p>
                                 <p class="product-name">Size:{{i.product_size.size}}</p>
-                                <div class="product-price">Price: ${{i.product.price}}</div>
+                                <!-- Changed to display offerprice instead of price -->
+                                <div class="product-price">Price: <i class='bx bx-rupee'></i>{{i.product.offerprice}}</div>
 
                                 <a href="{% url 'remove_from_cart' i.id %}" class="remove-btn">Remove</a>
                             </div>
@@ -39,7 +40,7 @@
                             </div>
                         </form>
                     </td>
-                    <td class="subtotal">${{i.total_price|floatformat:2}}</td>
+                    <td class="subtotal"><i class='bx bx-rupee'></i>{{i.total_price|floatformat:2}}</td>
                 </tr>   
                 {% endfor %}
             </tbody>
@@ -50,12 +51,12 @@
         <table>
             <tr>
                 <td>Total</td>
-                <td>${{ total_price|floatformat:2 }}</td>
+                <td><i class='bx bx-rupee'></i>{{ total_price|floatformat:2 }}</td>
             </tr>
 
             <tr>
                 <td colspan="2">
-                   <a href="#"> <button class="desc-btn desc-btn-primary buy-btn" name="buy">PROCEED TO CHECKOUT</button>
+                   <a href="{% url 'checkout' %}"> <button class="desc-btn desc-btn-primary buy-btn" name="buy">PROCEED TO CHECKOUT</button>
                    </a>
                 </td>
             </tr>
@@ -92,4 +93,6 @@
         const input = document.getElementById(id);
         input.value = parseInt(input.value) + 1;
     }
+
+
 </script>

@@ -82,7 +82,7 @@ class Order(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     
     amount = models.FloatField(_("Amount"), null=False, blank=False)
-    status = CharField(
+    status = models.CharField(
         _("Payment Status"),
         default=PaymentStatus.PENDING,
         max_length=254,

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import razorpay
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,5 +133,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'loft5661@gmail.com'  # Your Gmail address
-EMAIL_HOST_PASSWORD = 'igpm bsjq yoot mfau'  # Your Gmail password or App password
+EMAIL_HOST_PASSWORD = ''  # Your Gmail password or App password
 DEFAULT_FROM_EMAIL = 'loft5661@gmail.com'
+
+
+RAZORPAY_KEY_ID = ''
+RAZORPAY_KEY_SECRET = ''

@@ -31,12 +31,9 @@
                         {% endif %}
                     </a>
 
-                    <a href="{% url 'add_to_wishlist' product.id %}" class="product-like-icon" data-tip="Add to Wishlist">
-                        <i id="likeButton" class="far fa-heart"></i>
-                    </a>
                 </div>
                 <h6 class="mt-3">{{ product.name }}</h6>
-                <h6 class="mt-2"><i class='bx bx-rupee'></i>{{ product.price }}</h6>
+                <h6 class="mt-2"><i class='bx bx-rupee'></i>{{ product.offerprice }}</h6>
             </div>
         </div>
         {% endfor %}

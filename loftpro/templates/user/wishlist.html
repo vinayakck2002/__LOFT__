@@ -27,7 +27,7 @@
                         </div>
                         <div class="wishlist-item-info">
                             <h3 class="wishlist-item-name">{{ item.product.name }}</h3>
-                            <div class="wishlist-item-price">${{ item.product.price }}</div>
+                            <div class="wishlist-item-price">${{ item.product.offerprice }}</div>
                             <div class="wishlist-item-actions">
                                 <a href="{% url 'product_detail' pk=item.product.id %}" class="btn btn-secondary">View Product</a>
                                 <a href="{% url 'remove_from_wishlist' item.product.id %}?next=wishlist" class="btn btn-outline">Remove</a>

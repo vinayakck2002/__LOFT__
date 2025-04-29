@@ -12,7 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import razorpay
 import json
-
+from django.db.models import Count, Q
+from django.utils import timezone
+from datetime import timedelta
 def admin_view(request):
     products=Product.objects.all()
     context = {
@@ -516,16 +518,16 @@ def product_detail_view(request, pk):
 # Add these imports at the top of your views.py file
 
 
+# Updated Cart_view function that uses offerprice instead of price
 def Cart_view(request):
     cart_items = Cart.objects.filter(user=request.user)
     for item in cart_items:
-        item.total_price = item.product.price * item.quantity  # Add total price for each product
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
+        item.total_price = item.product.offerprice * item.quantity  # Using offerprice instead of price
+    total_price = sum(item.product.offerprice * item.quantity for item in cart_items)
     cart_item_count = cart_items.count()
     return render(request, 'user/cart.html', {'cart_items': cart_items, 'total_price': total_price, 'cart_item_count': cart_item_count})
 
-# New view to handle quantity updates via standard form submission
-
+# Updated update_cart_quantity view
 def update_cart_quantity(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
@@ -533,6 +535,12 @@ def update_cart_quantity(request):
 
         cart_item = get_object_or_404(Cart, id=item_id, user=request.user)
         product_size = cart_item.product_size
+
+        if product_size is None:
+            messages.error(request, "This product size is no longer available.")
+            cart_item.delete()  # optional: you may want to remove invalid cart item
+            return redirect('cart')
+
         old_quantity = cart_item.quantity
         quantity_diff = new_quantity - old_quantity
 
@@ -558,6 +566,7 @@ def update_cart_quantity(request):
 
         messages.success(request, "Cart updated successfully.")
         return redirect('cart')
+    
 @login_required(login_url='register')     
 def add_to_cart(request, product_id):
     if request.method == 'POST':
@@ -616,11 +625,6 @@ def add_to_wishlist(request, id):
         user=request.user,
         product=product
     )
-    
-    if created:
-        messages.success(request, f"{product.name} has been added to your wishlist!")
-    else:
-        messages.info(request, f"{product.name} is already in your wishlist.")
     
     # Redirect back to the product page
     return redirect('product_detail', pk=id)
@@ -852,82 +856,57 @@ def edit_username(request):
 def payment(request):
     return render(request,'user/payment.html')
 
-def order_payment(request,id):
-        user=request.user
-        user_data = User.objects.get(username=user)
-        # print(user)
-        product = Product.objects.get(pk=id)
-        amount = product.price
-
-        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-        razorpay_order = client.order.create(
-            {"amount": int(amount) * 100, "currency": "INR", "payment_capture": "1"}
-        )
-
-        order_id = razorpay_order['id']
-
-        # cart=Cart.objects.filter(user=user_data)
-        # for i in cart:        
-        #     order = Order.objects.create(
-        #         user=user_data, amount=amount, provider_order_id=order_id,product=product,quantity=1
-        #     )
-        #     order.save()
+# Payment view with fixes
 
 
-        order = Order.objects.create(
-            user=user_data, amount=amount, provider_order_id=order_id,product=product,quantity=1
-        )
-        order.save()
+@login_required
+def checkout(request):
+    # Get cart items for the current user
+    cart_items = Cart.objects.filter(user=request.user)
+    
+    if not cart_items.exists():
+        messages.info(request, "Your cart is empty.")
+        return redirect('/')  # Redirect to homepage using absolute path
+    
+    # Calculate total price
+    total_price = 0
+    for item in cart_items:
+        # Use getattr to handle the case where offerprice might not exist
+        price = getattr(item.product, 'offerprice', item.product.price)
+        item_price = price * item.quantity
+        total_price += item_price
 
-        return render(
-            request,
-            "user/payment.html",
-            {
-                "callback_url": "http://" + "127.0.0.1:8000" + "razorpay/callback",
-                "razorpay_key": settings.RAZORPAY_KEY_ID,
-                "order": order,
+        # Add a temporary attribute for template rendering
+        item.total_price = item_price
 
-            },
-        )
+    # Get user's addresses
+    addresses = Address.objects.filter(user=request.user)
+    
+    if not addresses.exists():
+        messages.info(request, "Please add a shipping address.")
+        # Use an absolute URL path instead of a named URL
+        return redirect('/address/add/')  
+
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'addresses': addresses,
+    }
+
+    return render(request, 'user/checkout.html', context)
 
 
 
 
+@login_required
+def my_orders(request):
+    # Get all orders for the logged-in user
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'user/my_orders.html', {'orders': orders})
 
-@csrf_exempt
-def callback(request):
 
-    def verify_signature(response_data):
-        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-        return client.utility.verify_payment_signature(response_data)
+def checkout_buy(request):
+    return render (request,'user/checkout_buy.html')
 
-    if "razorpay_signature" in request.POST:
-        payment_id = request.POST.get("razorpay_payment_id", "")
-        provider_order_id = request.POST.get("razorpay_order_id", "")
-        signature_id = request.POST.get("razorpay_signature", "")
 
-        order = Order.objects.get(provider_order_id=provider_order_id)
-        order.payment_id = payment_id
-        order.signature_id = signature_id
-        order.save()
 
-        if verify_signature(request.POST):
-            order.status = PaymentStatus.SUCCESS
-            order.save()
-            return render(request, "callback.html", context={"status": order.status}) 
-            # or return redirect(function name of callback giving html page)
-        else:
-            order.status = PaymentStatus.FAILURE
-            order.save()
-            return render(request, "callback.html", context={"status": order.status}) 
-            # or return redirect(function name of callback giving html page)
-    else:
-     payment_id = json.loads(request.POST.get("error[metadata]")).get("payment_id")
-     provider_order_id = json.loads(request.POST.get("error[metadata]")).get("order_id")
-
-     order = Order.objects.get(provider_order_id=provider_order_id)
-     order.payment_id = payment_id
-     order.status = PaymentStatus.FAILURE
-     order.save()
-
-    return render(request, "callback.html", context={"status": order.status}) 

@@ -35,6 +35,11 @@ urlpatterns = [
     path('wishlist/', views.view_wishlist, name='wishlist'),
     path('add_to_wishlist/<int:id>/', views.add_to_wishlist, name='add_to_wishlist'),
     path('remove_from_wishlist/<int:id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
+    path('checkout', views.checkout, name='checkout'),
+    path('checkout_buy/', views.checkout_buy, name='checkout_buy'),
+    # path('place-order/', views.place_order, name='place_order'),
+    path('my-orders/', views.my_orders, name='my_orders'),
+
 
 
 
@@ -54,7 +59,6 @@ urlpatterns = [
 
 
     path('payment',views.payment,name='payment'),
-    path('order_payment/<int:order_id>/', views.order_payment, name='order_payment'),  
       
       
       
