@@ -465,6 +465,81 @@ display: inline-block;
   position: relative;
 }
 
+/* Product Details Column Styles */
+.product-details {
+  flex: 1;
+}
+
+.product-details h4 {
+  color: #1e293b;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.product-details p {
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.product-details span {
+  display: inline-block;
+  background-color: #f1f5f9;
+  color: #475569;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+/* Product Image Styles */
+.view-booking-td img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.view-booking-td img:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+.view-booking-td .w-16 {
+  width: 4rem;
+  min-width: 4rem;
+}
+
+.view-booking-td .h-16 {
+  height: 4rem;
+}
+
+.view-booking-td .bg-gray-200 {
+  background-color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  border: 1px solid #cbd5e1;
+}
+
+.view-booking-td .text-xs {
+  font-size: 0.75rem;
+}
+
+.view-booking-td .text-gray-500 {
+  color: #64748b;
+}
+
+.view-booking-td .text-gray-600 {
+  color: #475569;
+}
+
 /* Apply these conditionally in your template */
 .status-paid {
   color: #10b981;
@@ -559,6 +634,19 @@ display: inline-block;
   color: white;
 }
 
+/* Product column specific responsive styles */
+.view-booking-td .flex {
+  display: flex;
+}
+
+.view-booking-td .items-center {
+  align-items: center;
+}
+
+.view-booking-td .mr-4 {
+  margin-right: 1rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .view-booking-container {
@@ -589,6 +677,32 @@ display: inline-block;
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+  }
+  
+  /* Responsive adjustments for product details column */
+  .view-booking-td .flex {
+    flex-direction: column;
+  }
+  
+  .view-booking-td .mr-4 {
+    margin-right: 0;
+    margin-bottom: 0.75rem;
+  }
+  
+  .view-booking-td .w-16 {
+    width: 100%;
+    height: auto;
+    max-width: 120px;
+    margin: 0 auto;
+  }
+  
+  .view-booking-td .h-16 {
+    height: auto;
+    aspect-ratio: 1/1;
+  }
+  
+  .product-details {
+    text-align: center;
   }
 }
 
@@ -652,74 +766,95 @@ display: inline-block;
     </nav>
 
     <div class="view-booking-container max-w-6xl mx-auto px-4 py-6 ms-auto">
-        <h2 class="view-booking-title text-2xl font-bold mb-6">Order Bookings</h2>
-    
-        <form method="get" class="view-booking-filters flex flex-wrap gap-4 mb-6">
-            <div class="view-booking-filter">
-                <label class="block text-sm font-semibold mb-1">Filter by Status</label>
-                <select name="status" onchange="this.form.submit()" class="view-booking-select border px-3 py-2 rounded">
-                    <option value="">All</option>
-                    {% for status in payment_statuses %}
-                        <option value="{{ status }}" {% if current_status == status %}selected{% endif %}>{{ status }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-    
-            <div class="view-booking-sort">
-                <label class="block text-sm font-semibold mb-1">Sort by</label>
-                <select name="sort" onchange="this.form.submit()" class="view-booking-select border px-3 py-2 rounded">
-                    <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>Newest</option>
-                    <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>Oldest</option>
-                    <option value="-amount" {% if current_sort == "-amount" %}selected{% endif %}>Amount (High to Low)</option>
-                    <option value="amount" {% if current_sort == "amount" %}selected{% endif %}>Amount (Low to High)</option>
-                    <option value="status" {% if current_sort == "status" %}selected{% endif %}>Status</option>
-                </select>
-            </div>
-        </form>
-    
-        <div class="view-booking-table-wrapper overflow-x-auto">
-            <table class="view-booking-table w-full border-collapse text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="view-booking-th border px-4 py-2 text-left">Order ID</th>
-                        <th class="view-booking-th border px-4 py-2 text-left">User</th>
-                        <th class="view-booking-th border px-4 py-2 text-left">Amount</th>
-                        <th class="view-booking-th border px-4 py-2 text-left">Status</th>
-                        <th class="view-booking-th border px-4 py-2 text-left">Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
-                    <tr class="view-booking-row hover:bg-gray-50">
-                        <td class="view-booking-td border px-4 py-2">{{ order.id }}</td>
-                        <td class="view-booking-td border px-4 py-2">{{ order.user.username }}</td>
-                        <td class="view-booking-td border px-4 py-2">{{ order.amount }}</td>
-                        <td class="view-booking-td border px-4 py-2">{{ order.status }}</td>
-                        <td class="view-booking-td border px-4 py-2">{{ order.created_at }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="view-booking-empty text-center px-4 py-6 text-gray-500">No orders found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    
-        <div class="view-booking-pagination mt-6 flex justify-between items-center">
-            <span class="text-sm text-gray-600">Page {{ orders.number }} of {{ orders.paginator.num_pages }}</span>
-            <div class="view-booking-pagination-controls flex gap-2">
-                {% if orders.has_previous %}
-                    <a href="?page={{ orders.previous_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
-                       class="view-booking-btn border px-3 py-1 rounded hover:bg-gray-100">Previous</a>
-                {% endif %}
-                {% if orders.has_next %}
-                    <a href="?page={{ orders.next_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
-                       class="view-booking-btn border px-3 py-1 rounded hover:bg-gray-100">Next</a>
-                {% endif %}
-            </div>
-        </div>
-    </div> 
+      <h2 class="view-booking-title text-2xl font-bold mb-6">Order Bookings</h2>
+  
+      <form method="get" class="view-booking-filters flex flex-wrap gap-4 mb-6">
+          <div class="view-booking-filter">
+              <label class="block text-sm font-semibold mb-1">Filter by Status</label>
+              <select name="status" onchange="this.form.submit()" class="view-booking-select border px-3 py-2 rounded">
+                  <option value="">All</option>
+                  {% for status in payment_statuses %}
+                      <option value="{{ status }}" {% if current_status == status %}selected{% endif %}>{{ status }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+  
+          <div class="view-booking-sort">
+              <label class="block text-sm font-semibold mb-1">Sort by</label>
+              <select name="sort" onchange="this.form.submit()" class="view-booking-select border px-3 py-2 rounded">
+                  <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>Newest</option>
+                  <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>Oldest</option>
+                  <option value="-amount" {% if current_sort == "-amount" %}selected{% endif %}>Amount (High to Low)</option>
+                  <option value="amount" {% if current_sort == "amount" %}selected{% endif %}>Amount (Low to High)</option>
+                  <option value="status" {% if current_sort == "status" %}selected{% endif %}>Status</option>
+              </select>
+          </div>
+      </form>
+  
+      <div class="view-booking-table-wrapper overflow-x-auto">
+          <table class="view-booking-table w-full border-collapse text-sm">
+              <thead class="bg-gray-100">
+                  <tr>
+                      <th class="view-booking-th border px-4 py-2 text-left">Order ID</th>
+                      <th class="view-booking-th border px-4 py-2 text-left">User</th>
+                      <th class="view-booking-th border px-4 py-2 text-left">Amount</th>
+                      <th class="view-booking-th border px-4 py-2 text-left">Status</th>
+                      <th class="view-booking-th border px-4 py-2 text-left">Created At</th>
+                      <th class="view-booking-th border px-4 py-2 text-left">Product Details</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for order in orders %}
+                  <tr class="view-booking-row hover:bg-gray-50">
+                      <td class="view-booking-td border px-4 py-2">{{ order.id }}</td>
+                      <td class="view-booking-td border px-4 py-2">{{ order.user.username }}</td>
+                      <td class="view-booking-td border px-4 py-2">{{ order.amount }}</td>
+                      <td class="view-booking-td border px-4 py-2">{{ order.status }}</td>
+                      <td class="view-booking-td border px-4 py-2">{{ order.created_at }}</td>
+                      <td class="view-booking-td border px-4 py-2">
+                          <div class="flex items-center">
+                              <div class="mr-4 w-16 h-16 flex-shrink-0">
+                                  {% if order.product.image %}
+                                      <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="w-full h-full object-cover rounded">
+                                  {% else %}
+                                      <div class="w-full h-full bg-gray-200 rounded flex items-center justify-center">
+                                          <span class="text-xs text-gray-500">No image</span>
+                                      </div>
+                                  {% endif %}
+                              </div>
+                              <div class="product-details">
+                                  <h4 class="font-medium">{{ order.product.name }}</h4>
+                                  <p class="text-xs text-gray-600">{{ order.product.description|truncatechars:50 }}</p>
+                                  {% if order.product.category %}
+                                      <span class="text-xs bg-gray-100 px-2 py-1 rounded mt-1 inline-block">{{ order.product.category }}</span>
+                                  {% endif %}
+                              </div>
+                          </div>
+                      </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                      <td colspan="6" class="view-booking-empty text-center px-4 py-6 text-gray-500">No orders found.</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  
+      <div class="view-booking-pagination mt-6 flex justify-between items-center">
+          <span class="text-sm text-gray-600">Page {{ orders.number }} of {{ orders.paginator.num_pages }}</span>
+          <div class="view-booking-pagination-controls flex gap-2">
+              {% if orders.has_previous %}
+                  <a href="?page={{ orders.previous_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
+                     class="view-booking-btn border px-3 py-1 rounded hover:bg-gray-100">Previous</a>
+              {% endif %}
+              {% if orders.has_next %}
+                  <a href="?page={{ orders.next_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
+                     class="view-booking-btn border px-3 py-1 rounded hover:bg-gray-100">Next</a>
+              {% endif %}
+          </div>
+      </div>
+  </div> 
     
     
     
